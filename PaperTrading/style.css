@@ -1,0 +1,183 @@
+
+:root {
+    /* --sell-clr: hsl(3, 77%, 67%); */
+    /* --buy-clr: hsl(160, 36%, 51%); */
+    --sell-clr: hsl(3, 80%, 50%);
+    --buy-clr: hsl(160, 50%, 50%);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    font-family: 'URW DIN';
+}
+
+.nav-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: .5rem 1rem;
+    background-color: hsl(160, 100%, 75%);
+    position: relative;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+.nav-items>ul,
+.logo>h1,
+h3 {
+    margin: 0;
+}
+
+.nav-items,
+.nav-items>ul {
+    display: flex;
+    gap: 1.75rem;
+    justify-content: flex-end;
+    /* border: 2px solid red; */
+}
+
+.logo,
+.nav-items {
+    flex-grow: 1;
+}
+
+
+.cool>li {
+    position: relative;
+}
+
+.cool>li:hover .dropdown {
+    display: block;
+}
+
+.dropdown {
+    position: absolute;
+    display: none;
+    background-color: white;
+    padding: .5rem 1rem;
+    top: 100%;
+    right: -85%;
+    border-radius: 2px;
+    transition: display 0.5s;
+    box-shadow: 0 50px 100px rgba(50, 50, 93, .1), 0 15px 35px rgba(50, 50, 93, .15), 0 5px 15px rgba(0, 0, 0, .1);
+    z-index: 2;
+    border-radius: 5px;
+    /* transform: translateY(100px); */
+}
+
+.fund-form {
+    padding: .3rem 0;
+}
+
+.funds-button {
+    margin-top: .3rem;
+    background: var(--buy-clr);
+    border-radius: 3px;
+    border-width: 1px;
+    border-style: outset;
+}
+
+.portfolio-dropdown {
+    right: -15%;
+}
+
+.balance,
+.coins li {
+    display: flex;
+    gap: 2rem;
+    justify-content: space-between;
+    padding: .2rem 0 .3rem 0;
+}
+
+.balance {
+    border-bottom: 2px solid black;
+
+}
+
+.coins>h3 {
+    padding: .1rem 0;
+}
+
+
+#chartContainer {
+    margin: 0;
+    /* border: 2px solid red; */
+}
+
+
+.trade {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 2rem 2rem 1rem 2rem;
+    padding: 1rem;
+    margin: 1rem .3rem;
+    border-width: 1px;
+    border-style: outset;
+    /* border: 2px solid red; */
+}
+
+.buy,
+.buy>form,
+.sell,
+.sell>form,
+.coin-data {
+    /* flex: 1; */
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+}
+
+.buy,
+.sell,
+.coin-data {
+    flex: 1;
+}
+
+.buy-button,
+.sell-button {
+    border-radius: 3px;
+    /* border: 50px solid var(--sell-clr); */
+    padding: .2rem;
+    border-width: 1px;
+    border-style: outset;
+}
+
+.buy-button {
+    background: var(--buy-clr);
+    border-color: var(--buy-clr);
+}
+
+.sell-button {
+    background: var(--sell-clr);
+    border-color: var(--sell-clr);
+}
+
+.cointicker, .market-data p {
+    margin: 0;
+    padding: .3rem;
+}
+
+.coin-data {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+.icon {
+    height: 100%;
+    width: 50%;
+    background-image: url('https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1547033579');
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}

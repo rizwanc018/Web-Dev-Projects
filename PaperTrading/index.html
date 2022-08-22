@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+    <title>Paper Trade</title>
+</head>
+
+<body>
+    <nav class="nav-bar">
+        <div class="dropdownbackground">
+            <span class="arrow"></span>
+        </div>
+        <div class="logo">
+            <h1>Kupaper</h1>
+        </div>
+        <div class="nav-items">
+            <form class="search-form">
+                <input type="text" class="coin-search" placeholder="Bitcoin/btc">
+            </form>
+
+
+            <ul class="cool">
+                <li class="funds">Add Fund
+                    <div class="dropdown funds-dropdown">
+                        <form class="fund-form">
+                            <input type="number" placeholder="1000" required>
+                            <input class="funds-button" type="submit" value="Add Funds">
+                        </form>
+                    </div>
+                </li>
+
+                <li class="portfolio">Portfolio
+                    <div class="dropdown portfolio-dropdown">
+                        <div class="balance">
+                            <span>Balance</span> <span class="balance-amount">$100</span>
+                        </div>
+                        <div class="coins">
+                            <h3>Coins</h3>
+                            <ul>
+                                <li>
+                                    <span class="coin-name">Bitcoin</span>
+                                    <span class="coin-amount">2</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+    <div class="cointicker">Bitcoin <span class="ticker-price"></span></div>
+    <div id="chartContainer" style="height: 62vh; width: 100%;"></div>
+
+    <div class="trade">
+        <div class="buy">
+            <form>
+                <label for="buy-price">Buy Price:</label>
+                <input type="number" id="buy-price" placeholder="USD" required>
+                <label class="buy-amount" for="buy-amount">Coin</label>
+                <input type="number" id="buy-amount" placeholder="coin" required>
+                <input class="buy-button" type="submit" value="Buy">
+            </form>
+        </div>
+        <div class="sell">
+            <form>
+                <label for="sell-price">Sell Price:</label>
+                <input type="number" id="sell-price" placeholder="USD" required>
+                <label class="sell-amount" for="sell-amount">Coin</label>
+                <input type="number" id="amount" placeholder="coin" required>
+                <input class="sell-button" type="submit" value="Sell">
+            </form>
+        </div>
+        <div class="coin-data">
+            <div class="icon">
+
+            </div>
+            <div class="market-data">
+                <p class="cointicker">Bitcoin</p>
+                <p>Price <span class="ticker-price"></span></p>
+                <p>Market Cap <span class="marketcap">$16000</span></p>
+                <p>Volume Change <span class="volume">$16000</span></p>
+            </div>
+        </div>
+    </div>
+    <script>
+
+    </script>
+        <script src="script.js"></script>
+
+</body>
+
+</html>
