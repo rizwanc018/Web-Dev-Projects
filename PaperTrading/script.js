@@ -3,12 +3,59 @@ let lastItem;
 let chart;
 let previousPrice = 0;
 let color = 'black';
+const coinPairs = [];
+let coinPairUpper = 'BTCUSDT'
+let coinPairLower = 'btcusdt'
 
-
+const coinSearch = document.querySelector('.search-form');
 const tickerPrice = document.querySelectorAll('.ticker-price');
+const searchInput = document.querySelector('.coin-search');
+const suggestions = document.querySelector('.suggestions');
+let suggestionList;
+
+
+const coin_pairs_url = 'https://api.binance.com/api/v1/exchangeInfo';
+async function getCoins() {
+    const response = await fetch(coin_pairs_url);
+    const data = await response.json();
+    const symbolsArray = data.symbols;
+    symbolsArray.forEach(e => {
+        if (e.symbol.includes('USDT')) {
+            coinPairs.push(e.symbol);
+        }
+    });
+}
+
+function findMatches(wordToMatch, coinPairs) {
+    return coinPairs.filter(pairs => {
+        const regex = new RegExp(wordToMatch, 'gi');
+        return pairs.match(regex);
+    })
+}
+
+function displayMatches() {
+    if (!this.value) {
+        suggestions.innerHTML = null;
+        return;
+    }
+    console.log(this.value);
+    const matchArray = findMatches(this.value, coinPairs);
+    const html = matchArray.map(pairs => {
+        return `
+          <li>
+            <span class="suggestionlist">${pairs}</span>
+          </li>
+        `;
+    }).join('');
+    suggestions.innerHTML = html;
+    suggestionList = document.querySelectorAll('.suggestionlist');
+    // suggestionList.forEach(e => e.addEventListener('click', changeCoin))
+
+}
+
+
 
 window.onload = function () {
-
 
     chart = new CanvasJS.Chart("chartContainer", {
         animationEnabled: true,
@@ -57,10 +104,8 @@ window.onload = function () {
         headers: myHeaders,
         redirect: 'follow'
     };
-
     // const api_url = 'https://api.coingecko.com/api/v3/coins/bitcoin/ohlc?vs_currency=usd&days=1';
-    const api_url = 'https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1m&limit=120';
-
+    const api_url = `https://api.binance.com/api/v3/klines?symbol=${coinPairUpper}&interval=1m&limit=120`;
     async function generateChartData() {
         let chartData = [];
         const response = await fetch(api_url);
@@ -77,37 +122,32 @@ window.onload = function () {
         chart.render();
         lastItem = dataPoints[dataPoints.length - 1];
     }
+
+    getCoins();
     generateChartData();
     /////////////////////////////////////////////////
-
 }
 
-let ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@kline_1m');
+let ws = new WebSocket(`wss://stream.binance.com:9443/ws/${coinPairLower}@kline_1m`);
 let oldtime = 1;
 let flag = true;
-
 ws.onmessage = (e) => {
-
     if (flag) {
         oldtime = lastItem.x.getTime();
         flag = false;
     }
-
     let priceObj = JSON.parse(e.data);
     let newtime = priceObj.k.t;
-
     if (oldtime == newtime) {
-        console.log(oldtime, "match");
+        // console.log(oldtime, "match");
         dataPoints.pop();
     }
-
     previousPrice < parseFloat(priceObj.k.c) ? color = 'green' : color = 'red';
     tickerPrice.forEach(e => {
         e.innerHTML = parseFloat(priceObj.k.c);
         e.style.color = color;
     })
-    previousPrice = parseFloat(priceObj.k.c) ;
-
+    previousPrice = parseFloat(priceObj.k.c);
     dataPoints.push({
         x: new Date(priceObj.k.t),
         y: [
@@ -116,5 +156,23 @@ ws.onmessage = (e) => {
     })
     oldtime = newtime;
     chart.render();
-
 };
+
+
+// function testing() {
+//     console.log(this);
+// }
+
+function readForm(e) {
+    e.preventDefault();
+    const searchedCoin = this.querySelector('[name=coin-search]').value;
+    changeCoin(searchedCoin);
+}
+
+function changeCoin(coinName){
+    coinPairUpper = coinName.toUpperCase();
+    coinPairLower = coinName.toLowerCase();
+}
+
+searchInput.addEventListener('input', displayMatches);
+coinSearch.addEventListener('submit', readForm);

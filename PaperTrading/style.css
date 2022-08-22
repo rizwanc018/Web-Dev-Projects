@@ -48,7 +48,42 @@ h3 {
 .logo,
 .nav-items {
     flex-grow: 1;
+    position: relative;
 }
+
+.search-form {
+    position: relative;
+}
+
+.suggestions {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    z-index: 1;
+    top: 88%;
+    width: 100%;
+  }
+
+  .suggestions li {
+    background: white;
+    list-style: none;
+    border-bottom: 1px solid #D8D8D8;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.14);
+    margin: 0;
+    font-size: 14px;
+    padding: .5rem;
+    transition: background 0.2s;
+    display: flex;
+    text-transform: capitalize;
+  }
+
+  .suggestions li:nth-child(even) {
+    background: linear-gradient(to bottom,  #ffffff 0%,#EFEFEF 100%);
+  }
+  
+  .suggestions li:nth-child(odd) {
+    background: linear-gradient(to top,  #ffffff 0%,#EFEFEF 100%);
+  }
 
 
 .cool>li {
