@@ -86,7 +86,7 @@ h3 {
 
 .top-ticker {
     display: flex;
-    gap: 1rem;
+    gap: .5rem;
 }
 
 .top-ticker>p {
@@ -205,10 +205,20 @@ h3 {
     border-color: var(--sell-clr);
 }
 
+
+
 .cointicker,
 .market-data p {
     margin: 0;
     padding: .3rem;
+    display: flex;
+    justify-content: space-between;
+    gap: .5rem;
+    /* border: 2px solid red; */
+}
+
+.market-data>p>span {
+    color: blue;
 }
 
 .coin-data {
