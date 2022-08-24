@@ -3,6 +3,7 @@
     /* --buy-clr: hsl(160, 36%, 51%); */
     --sell-clr: hsl(3, 80%, 50%);
     --buy-clr: hsl(160, 50%, 50%);
+    --lt-black: hsla(0, 0%, 0%, 0.75);
 }
 
 * {
@@ -32,7 +33,7 @@ ul {
 
 .nav-items>ul,
 .logo>h1,
-h3 {
+h3, h4 {
     margin: 0;
 }
 
@@ -218,7 +219,7 @@ h3 {
 }
 
 .market-data>p>span {
-    color: blue;
+    color: var(--lt-black);
 }
 
 .coin-data {
