@@ -7,7 +7,7 @@ const coinPairs = [];
 let coinPairUpper = 'BTCUSDT'
 let coinPairLower = 'btcusdt'
 let currentPair = coinPairUpper;
-let balance = 0;
+let balance;
 let closePrice;  // close price from ws
 let buyLimit = -100000000;
 let sellLimit = 100000000;
@@ -16,10 +16,11 @@ let costofSelling // money made from selling
 let currentCoinBalance;
 let newlyBoughtQuantity;
 let newlySoldQuantity;
+let timeInterval = '5m';
 
 let coin_pairs_url = 'https://api.binance.com/api/v1/exchangeInfo';
-let api_url = `https://api.binance.com/api/v3/klines?symbol=${coinPairUpper}&interval=1m&limit=120`;
-let webSocket_url = `wss://stream.binance.com:9443/ws/${coinPairLower}@kline_1m`
+let api_url = `https://api.binance.com/api/v3/klines?symbol=${coinPairUpper}&interval=${timeInterval}&limit=120`;
+let webSocket_url = `wss://stream.binance.com:9443/ws/${coinPairLower}@kline_${timeInterval}`;
 
 
 const fundForm = document.querySelector('.fund-form');
@@ -33,13 +34,15 @@ const tickerPrice = document.querySelectorAll('.ticker-price');
 const baseVolume = document.querySelector('.base-vol');
 const quoteVolume = document.querySelector('.quote-vol');
 const trades = document.querySelector('.trades');
+const title = document.querySelector('title');
+const errMsg = document.querySelector('.error-msg');
 
 const searchInput = document.querySelector('.coin-search');
 const suggestions = document.querySelector('.suggestions');
 let suggestionList;
 
-const coins = JSON.parse(localStorage.getItem('coin')) || []; // used to store coins
-let coin = {}  // object use to store coin in coins array
+const coins = JSON.parse(localStorage.getItem('coins')) || []; // using to store coinsconst
+let coin = {}  // object. using to store coin in "coins" array
 
 
 
@@ -53,6 +56,7 @@ async function getCoins() {
         }
     });
 }
+
 
 function findMatches(wordToMatch, coinPairs) {
     return coinPairs.filter(pairs => {
@@ -190,6 +194,7 @@ function startSocketConnection() {
         baseVolume.innerHTML = parseFloat(priceObj.k.v).toFixed(2);
         quoteVolume.innerHTML = parseFloat(priceObj.k.q).toFixed(2);
         trades.innerHTML = parseFloat(priceObj.k.n).toFixed(2);
+        title.innerHTML = `${currentPair} : ${closePrice}`;
         previousPrice = closePrice;
 
         dataPoints.push({
@@ -236,13 +241,20 @@ function changeCoin(coinName) {
 }
 
 function updateBalance() {
+    if (isNaN(balance)) {
+        balance = 0;
+        console.log('NAN', balance);
+    }
     localStorage.setItem('balance', balance);
+    console.log(balance);
     balanceElt.innerHTML = balance.toFixed(3);
 }
 
 function addFund(e) {
     e.preventDefault();
     const amountToAdd = this.querySelector('[name=add-funds]').value;
+    console.log(parseFloat(amountToAdd));
+    console.log(balance);
     balance += parseFloat(amountToAdd);
     updateBalance();
     this.reset();
@@ -256,7 +268,10 @@ function buyCoin(e) {
     quantity = parseFloat(this.querySelector('#buy-quantity').value);
     costOfBuying = price * quantity;
     if (balance < costOfBuying) {
-        alert(`Not enough balance`);
+        errMsg.innerHTML = 'Not enough balance'
+        setTimeout(() => {
+            errMsg.innerHTML = '';
+        }, 700)
         return;
     }
     buyLimit = price;
@@ -272,14 +287,18 @@ function sellCoin(e) {
     sellQuantity = parseFloat(this.querySelector('#sell-quantity').value);
     let coinExist = document.querySelector(`#${currentPair}`);
     if (!coinExist) {
-        // console.log('Not enough coin');
-        alert('Not enough coin');
+        errMsg.innerHTML = "You don't have coin"
+        setTimeout(() => {
+            errMsg.innerHTML = '';
+        }, 700)
         return;
     }
     currentCoinBalance = parseFloat(document.querySelector(`#${currentPair}-count`).innerHTML);
     if (currentCoinBalance < sellQuantity) {
-        // console.log('Not enough coin');
-        alert('Not enough coin');
+        errMsg.innerHTML = "Not enough coins"
+        setTimeout(() => {
+            errMsg.innerHTML = '';
+        }, 700)
         return;
     }
     sellLimit = sellPrice;
@@ -306,7 +325,7 @@ function updatePortfolioAfterBuying() {
 
     } else {
         currentCoinBalance = newlyBoughtQuantity;
-        let html = `<li> 
+        var html = `<li> 
                     <span id="${currentPair}">${currentPair}</span>
                     <span id="${currentPair}-count">${currentCoinBalance}</span>
                 </li>`;
@@ -325,7 +344,7 @@ function updatePortfolioAfterSelling() {
     currentCoinBalance = parseFloat(document.querySelector(`#${currentPair}-count`).innerHTML);
     currentCoinBalance -= newlySoldQuantity
     document.querySelector(`#${currentPair}-count`).innerHTML = currentCoinBalance;
-    
+
     coins.forEach(coin => {
         if (coin.coinPair == currentPair) {
             console.log('before', coin.coinBalance);
@@ -349,16 +368,23 @@ function updateSell() {
     updatePortfolioAfterSelling();
 }
 
-function loadStorage() {
+function loadLocalStorage() {
     balance = parseFloat(localStorage.getItem('balance'));
     updateBalance();
+    coins.forEach(coin => {
+        var html = `<li> 
+                    <span id="${coin.coinPair}">${coin.coinPair}</span>
+                    <span id="${coin.coinPair}-count">${coin.coinBalance}</span>
+                </li>`;
+        portfolio_ul.innerHTML += html;
+    })
 }
 
 generateChartData();
 drawChart();
 startSocketConnection();
 getCoins();
-loadStorage();
+loadLocalStorage();
 // updateBalance();
 
 searchInput.addEventListener('input', displayMatches);
@@ -366,3 +392,14 @@ coinSearch.addEventListener('submit', readForm);
 fundForm.addEventListener('submit', addFund);
 buyForm.addEventListener('submit', buyCoin);
 sellForm.addEventListener('submit', sellCoin);
+
+// const timeIntervalButton = document.querySelector('.time-interval');
+
+// function tst(e) {
+//     timeInterval =  e.target.innerHTML;
+//     api_url = `https://api.binance.com/api/v3/klines?symbol=${coinPairUpper}&interval=${timeInterval}&limit=120`;
+//     webSocket_url = `wss://stream.binance.com:9443/ws/${coinPairLower}@kline_${timeInterval}`;
+//     console.log(api_url);
+
+// }
+// timeIntervalButton.addEventListener('click', tst);
