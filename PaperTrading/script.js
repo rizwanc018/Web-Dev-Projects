@@ -7,7 +7,7 @@ const coinPairs = [];
 let coinPairUpper = 'BTCUSDT'
 let coinPairLower = 'btcusdt'
 let currentPair = coinPairUpper;
-let balance = 1000;
+let balance = 0;
 let closePrice;  // close price from ws
 let buyLimit = -100000000;
 let sellLimit = 100000000;
@@ -34,10 +34,13 @@ const baseVolume = document.querySelector('.base-vol');
 const quoteVolume = document.querySelector('.quote-vol');
 const trades = document.querySelector('.trades');
 
-
 const searchInput = document.querySelector('.coin-search');
 const suggestions = document.querySelector('.suggestions');
 let suggestionList;
+
+const coins = JSON.parse(localStorage.getItem('coin')) || []; // used to store coins
+let coin = {}  // object use to store coin in coins array
+
 
 
 async function getCoins() {
@@ -168,12 +171,12 @@ function startSocketConnection() {
         }
         closePrice = parseFloat(priceObj.k.c);
 
-        if(closePrice <= buyLimit) {
+        if (closePrice <= buyLimit) {
             updateBuy();
             buyLimit = -1000000000;
         }
 
-        if(closePrice >= sellLimit) {
+        if (closePrice >= sellLimit) {
             // console.log('inside ws');
             updateSell();
             sellLimit = 1000000000;
@@ -233,6 +236,7 @@ function changeCoin(coinName) {
 }
 
 function updateBalance() {
+    localStorage.setItem('balance', balance);
     balanceElt.innerHTML = balance.toFixed(3);
 }
 
@@ -267,12 +271,12 @@ function sellCoin(e) {
     sellPrice = parseFloat(this.querySelector('#sell-price').value);
     sellQuantity = parseFloat(this.querySelector('#sell-quantity').value);
     let coinExist = document.querySelector(`#${currentPair}`);
-    if(!coinExist) {
+    if (!coinExist) {
         // console.log('Not enough coin');
         alert('Not enough coin');
         return;
     }
-    currentCoinBalance = parseFloat(document.querySelector(`#${currentPair}-count`).innerHTML); 
+    currentCoinBalance = parseFloat(document.querySelector(`#${currentPair}-count`).innerHTML);
     if (currentCoinBalance < sellQuantity) {
         // console.log('Not enough coin');
         alert('Not enough coin');
@@ -287,9 +291,19 @@ function sellCoin(e) {
 function updatePortfolioAfterBuying() {
     let coinExist = document.querySelector(`#${currentPair}`);
     if (coinExist) {
-        currentCoinBalance = parseFloat(document.querySelector(`#${currentPair}-count`).innerHTML); 
-        // console.log(currentCoinBalance + newlyBoughtQuantity);
-        document.querySelector(`#${currentPair}-count`).innerHTML = currentCoinBalance + newlyBoughtQuantity;
+        currentCoinBalance = parseFloat(document.querySelector(`#${currentPair}-count`).innerHTML);
+        currentCoinBalance += newlyBoughtQuantity;
+        document.querySelector(`#${currentPair}-count`).innerHTML = currentCoinBalance;
+
+        coins.forEach(coin => {
+            if (coin.coinPair == currentPair) {
+                console.log('before', coin.coinBalance);
+                coin.coinBalance = currentCoinBalance;
+                console.log('after', coin.coinBalance);
+            }
+        })
+        localStorage.setItem('coins', JSON.stringify(coins));
+
     } else {
         currentCoinBalance = newlyBoughtQuantity;
         let html = `<li> 
@@ -297,14 +311,29 @@ function updatePortfolioAfterBuying() {
                     <span id="${currentPair}-count">${currentCoinBalance}</span>
                 </li>`;
         portfolio_ul.innerHTML += html;
+        coin = {
+            'coinPair': currentPair,
+            'coinBalance': currentCoinBalance
+        };
+        coins.push(coin);
+        localStorage.setItem('coins', JSON.stringify(coins));
     }
 
 }
 
 function updatePortfolioAfterSelling() {
-    currentCoinBalance = parseFloat(document.querySelector(`#${currentPair}-count`).innerHTML); 
-    // console.log(currentCoinBalance);
-    document.querySelector(`#${currentPair}-count`).innerHTML = currentCoinBalance - newlySoldQuantity;
+    currentCoinBalance = parseFloat(document.querySelector(`#${currentPair}-count`).innerHTML);
+    currentCoinBalance -= newlySoldQuantity
+    document.querySelector(`#${currentPair}-count`).innerHTML = currentCoinBalance;
+    
+    coins.forEach(coin => {
+        if (coin.coinPair == currentPair) {
+            console.log('before', coin.coinBalance);
+            coin.coinBalance = currentCoinBalance;
+            console.log('after', coin.coinBalance);
+        }
+    })
+    localStorage.setItem('coins', JSON.stringify(coins));
 }
 
 function updateBuy() {
@@ -320,14 +349,20 @@ function updateSell() {
     updatePortfolioAfterSelling();
 }
 
+function loadStorage() {
+    balance = parseFloat(localStorage.getItem('balance'));
+    updateBalance();
+}
+
 generateChartData();
 drawChart();
 startSocketConnection();
 getCoins();
-updateBalance();
+loadStorage();
+// updateBalance();
 
 searchInput.addEventListener('input', displayMatches);
 coinSearch.addEventListener('submit', readForm);
 fundForm.addEventListener('submit', addFund);
 buyForm.addEventListener('submit', buyCoin);
-sellForm.addEventListener('submit',sellCoin);
+sellForm.addEventListener('submit', sellCoin);
