@@ -1,9 +1,5 @@
-/* @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@500&display=swap'); */
 @import url('https://fonts.googleapis.com/css2?family=Exo:wght@600&display=swap');
 :root {
-    /* --sell-clr: hsl(3, 77%, 67%); */
-    /* --buy-clr: hsl(160, 36%, 51%); */
     --sell-clr: hsl(3, 80%, 50%);
     --buy-clr: hsl(160, 50%, 50%);
     --lt-black: hsla(0, 0%, 0%, 0.75);
@@ -93,14 +89,14 @@ h4 {
     padding: 0;
     position: absolute;
     z-index: 1;
-    top: 88%;
+    top: 100%;
     width: 100%;
 }
 
 .suggestions li {
     background: white;
     list-style: none;
-    border-bottom: 1px solid #D8D8D8;
+    border-bottom: 1px solid hsl(0, 0%, 85%);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.14);
     margin: 0;
     font-size: 14px;
@@ -108,26 +104,30 @@ h4 {
     transition: background 0.2s;
     display: flex;
     text-transform: capitalize;
+    font-size: 12px;
 }
 
 .suggestions li:nth-child(even) {
-    background: linear-gradient(to bottom, #ffffff 0%, #EFEFEF 100%);
+    /* background: linear-gradient(to bottom, #ffffff 0%, #EFEFEF 100%); */
+    background-color: hsl(0, 0%, 100%);
 }
 
 .suggestions li:nth-child(odd) {
-    background: linear-gradient(to top, #ffffff 0%, #EFEFEF 100%);
+    /* background: linear-gradient(to top, #ffffff 0%, #EFEFEF 100%); */
+    background-color: hsl(0, 0%, 99%);
 }
 
 .top-ticker {
     display: flex;
     gap: .5rem;
     align-items: center;
-    padding-left: .2rem;
+    /* padding-left: .2rem; */
 }
 
 .top-bar {
     display: flex;
     justify-content: space-between;
+    padding: 0 .2rem;
 }
 
 .top-bar p {

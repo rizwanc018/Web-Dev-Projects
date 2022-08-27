@@ -16,7 +16,8 @@ let costofSelling // money made from selling
 let currentCoinBalance;
 let newlyBoughtQuantity;
 let newlySoldQuantity;
-let timeInterval = '5m';
+let timeInterval = '1m';
+let showInterval = "hh:mm";
 
 let coin_pairs_url = 'https://api.binance.com/api/v1/exchangeInfo';
 let api_url = `https://api.binance.com/api/v3/klines?symbol=${coinPairUpper}&interval=${timeInterval}&limit=120`;
@@ -36,10 +37,12 @@ const quoteVolume = document.querySelector('.quote-vol');
 const trades = document.querySelector('.trades');
 const title = document.querySelector('title');
 const errMsg = document.querySelector('.error-msg');
+const timeIntervalButton = document.querySelector('.time-interval'); // Change chart interval
 
 const searchInput = document.querySelector('.coin-search');
 const suggestions = document.querySelector('.suggestions');
 let suggestionList;
+
 
 const coins = JSON.parse(localStorage.getItem('coins')) || []; // using to store coinsconst
 let coin = {}  // object. using to store coin in "coins" array
@@ -65,6 +68,11 @@ function findMatches(wordToMatch, coinPairs) {
     })
 }
 
+// hide display matches when focus is out
+function hide_displayMatches() {
+    suggestions.innerHTML = null;
+}
+
 function displayMatches() {
     if (!this.value) {
         suggestions.innerHTML = null;
@@ -85,7 +93,7 @@ function displayMatches() {
 }
 
 async function generateChartData() {
-    // dataPoints = [];
+    dataPoints = [];
     const response = await fetch(api_url);
     const data = await response.json();
     // console.log(data);
@@ -101,9 +109,7 @@ async function generateChartData() {
     lastItem = dataPoints[dataPoints.length - 1];
 }
 
-
-
-function drawChart() {
+function drawChart(showInterval) {
     chart = new CanvasJS.Chart("chartContainer", {
         animationEnabled: true,
         // interactivityEnabled: true,
@@ -120,12 +126,12 @@ function drawChart() {
         }],
         axisX: {
             interval: 1,
-            valueFormatString: "hh:mm",
+            valueFormatString: showInterval,
             labelFontSize: 12,
             // labelAngle: 50
         },
         axisY: {
-            prefix: "$",
+            prefix: "",
             title: "",
             labelFontSize: 12,
             // labelAngle: 50
@@ -155,6 +161,7 @@ function drawChart() {
 
 let connectionExist = false;
 let ws = new WebSocket(webSocket_url);
+
 function startSocketConnection() {
     if (connectionExist) {
         ws.close();
@@ -230,12 +237,13 @@ function changeCoin(coinName) {
     coinTicker.forEach(e => {
         e.innerHTML = coinPairUpper;
     });
-    api_url = `https://api.binance.com/api/v3/klines?symbol=${coinPairUpper}&interval=1m&limit=120`;
-    webSocket_url = `wss://stream.binance.com:9443/ws/${coinPairLower}@kline_1m`;
+    api_url = `https://api.binance.com/api/v3/klines?symbol=${coinPairUpper}&interval=${timeInterval}&limit=120`;
+    webSocket_url = `wss://stream.binance.com:9443/ws/${coinPairLower}@kline_${timeInterval}`;
     dataPoints = [];
     displayMatches()
     generateChartData();
-    drawChart();
+    drawChart(showInterval);
+    console.log("here", showInterval,timeInterval, api_url);
     startSocketConnection();
 
 }
@@ -246,7 +254,7 @@ function updateBalance() {
         console.log('NAN', balance);
     }
     localStorage.setItem('balance', balance);
-    console.log(balance);
+    // console.log(balance);
     balanceElt.innerHTML = balance.toFixed(3);
 }
 
@@ -380,26 +388,50 @@ function loadLocalStorage() {
     })
 }
 
+function changeInterval(e) {
+    timeInterval = e.target.innerHTML;
+    switch (timeInterval) {
+        case "1m":
+            showInterval = "hh:mm";
+            break;
+        case "5m":
+            showInterval = "hh:mm";
+            break;
+        case "1h":
+            showInterval = "DD/MM";
+            break;
+        case "4h":
+            showInterval = "DD/MM";
+            break;
+        case "1d":
+            showInterval = "DDD/MMM";
+            break;
+        case "1w":
+            showInterval = "DD/MM/YY";
+            break;
+        case "1M":
+            showInterval = "MMM/YY";
+            break;
+    }
+    api_url = `https://api.binance.com/api/v3/klines?symbol=${coinPairUpper}&interval=${timeInterval}&limit=120`;
+    webSocket_url = `wss://stream.binance.com:9443/ws/${coinPairLower}@kline_${timeInterval}`;
+    console.log(api_url);
+    generateChartData();
+    startSocketConnection()
+    drawChart(showInterval);
+}
+
 generateChartData();
-drawChart();
+drawChart(showInterval);
 startSocketConnection();
 getCoins();
 loadLocalStorage();
 // updateBalance();
 
 searchInput.addEventListener('input', displayMatches);
+searchInput.addEventListener('focusout', hide_displayMatches); // todo
 coinSearch.addEventListener('submit', readForm);
 fundForm.addEventListener('submit', addFund);
 buyForm.addEventListener('submit', buyCoin);
 sellForm.addEventListener('submit', sellCoin);
-
-// const timeIntervalButton = document.querySelector('.time-interval');
-
-// function tst(e) {
-//     timeInterval =  e.target.innerHTML;
-//     api_url = `https://api.binance.com/api/v3/klines?symbol=${coinPairUpper}&interval=${timeInterval}&limit=120`;
-//     webSocket_url = `wss://stream.binance.com:9443/ws/${coinPairLower}@kline_${timeInterval}`;
-//     console.log(api_url);
-
-// }
-// timeIntervalButton.addEventListener('click', tst);
+timeIntervalButton.addEventListener('click', changeInterval);
