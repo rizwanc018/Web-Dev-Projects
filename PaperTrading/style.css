@@ -50,7 +50,6 @@ ul {
 
 .logo {
     display: flex;
-    /* border: 2px solid red; */
     gap: .2rem;
     align-items: center;
 }
@@ -108,12 +107,10 @@ h4 {
 }
 
 .suggestions li:nth-child(even) {
-    /* background: linear-gradient(to bottom, #ffffff 0%, #EFEFEF 100%); */
     background-color: hsl(0, 0%, 100%);
 }
 
 .suggestions li:nth-child(odd) {
-    /* background: linear-gradient(to top, #ffffff 0%, #EFEFEF 100%); */
     background-color: hsl(0, 0%, 99%);
 }
 
@@ -121,7 +118,6 @@ h4 {
     display: flex;
     gap: .5rem;
     align-items: center;
-    /* padding-left: .2rem; */
 }
 
 .top-bar {
@@ -162,7 +158,6 @@ h4 {
     box-shadow: 0 50px 100px rgba(50, 50, 93, .1), 0 15px 35px rgba(50, 50, 93, .15), 0 5px 15px rgba(0, 0, 0, .1);
     z-index: 2;
     border-radius: 5px;
-    /* transform: translateY(100px); */
 }
 
 .fund-form {
@@ -201,7 +196,6 @@ h4 {
 
 #chartContainer {
     margin: 0;
-    /* border: 2px solid red; */
 }
 
 
@@ -214,7 +208,6 @@ h4 {
     margin: 1rem .3rem;
     border-width: 1px;
     border-style: outset;
-    /* border: 2px solid red; */
 }
 
 .buy,
@@ -222,7 +215,6 @@ h4 {
 .sell,
 .sell>form,
 .coin-data {
-    /* flex: 1; */
     display: flex;
     flex-direction: column;
     gap: .3rem;
@@ -237,7 +229,6 @@ h4 {
 .buy-button,
 .sell-button {
     border-radius: 3px;
-    /* border: 50px solid var(--sell-clr); */
     padding: .2rem;
     border-width: 1px;
     border-style: outset;
@@ -265,8 +256,6 @@ h4 {
     display: flex;
     justify-content: space-between;
     gap: .5rem;
-    /* flex: 1; */
-    /* border: 2px solid red; */
 }
 
 .market-data>p>span {
@@ -285,7 +274,3 @@ h4 {
 .btn:active {
     transform: scale(0.9);
 }
-
-/* .nav-bar > div {
-    border: 2px solid red;
-} */

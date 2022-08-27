@@ -128,7 +128,6 @@ function drawChart(showInterval) {
             interval: 1,
             valueFormatString: showInterval,
             labelFontSize: 12,
-            // labelAngle: 50
         },
         axisY: {
             prefix: "",
@@ -149,7 +148,7 @@ function drawChart(showInterval) {
             dataPoints: dataPoints
         }]
     });
-    //////////////////////////////////////////////
+
     const myHeaders = new Headers();
     myHeaders.append("Accept", "application/json");
     const requestOptions = {
@@ -177,7 +176,6 @@ function startSocketConnection() {
         let priceObj = JSON.parse(e.data);
         let newtime = priceObj.k.t;
         if (oldtime == newtime) {
-            // console.log(oldtime, "match");
             dataPoints.pop();
         }
         closePrice = parseFloat(priceObj.k.c);
@@ -188,7 +186,6 @@ function startSocketConnection() {
         }
 
         if (closePrice >= sellLimit) {
-            // console.log('inside ws');
             updateSell();
             sellLimit = 1000000000;
         }
@@ -254,7 +251,6 @@ function updateBalance() {
         console.log('NAN', balance);
     }
     localStorage.setItem('balance', balance);
-    // console.log(balance);
     balanceElt.innerHTML = balance.toFixed(3);
 }
 
@@ -371,7 +367,6 @@ function updateBuy() {
 
 function updateSell() {
     balance += costofSelling;
-    // console.log('here balance', balance)
     updateBalance();
     updatePortfolioAfterSelling();
 }
@@ -426,10 +421,9 @@ drawChart(showInterval);
 startSocketConnection();
 getCoins();
 loadLocalStorage();
-// updateBalance();
 
 searchInput.addEventListener('input', displayMatches);
-searchInput.addEventListener('focusout', hide_displayMatches); // todo
+searchInput.addEventListener('focusout', hide_displayMatches); 
 coinSearch.addEventListener('submit', readForm);
 fundForm.addEventListener('submit', addFund);
 buyForm.addEventListener('submit', buyCoin);
